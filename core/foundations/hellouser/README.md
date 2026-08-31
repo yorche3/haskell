@@ -1,6 +1,6 @@
 # Hello User — Haskell
 
-Implementación de la especificación [Hello, User!](https://github.com/yorche3/programming_languages) en **Haskell**, con un enfoque manual y minimalista.
+Implementación de la especificación [02_Hello_User](https://yorche3.github.io/programming_languages/core/foundations/02_Hello_User/) en **Haskell**, con un enfoque manual y minimalista.
 
 ---
 

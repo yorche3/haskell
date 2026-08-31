@@ -1,6 +1,6 @@
 # Hello World — Haskell
 
-Implementación de la especificación [Hello, World!](https://github.com/yorche3/programming_languages) en **Haskell**, con un enfoque manual y minimalista.
+Implementación de la especificación [01_Hello_World](https://yorche3.github.io/programming_languages/core/foundations/01_Hello_World/) en **Haskell**, con un enfoque manual y minimalista.
 
 ---
 
