@@ -13,3 +13,45 @@
 module NaiveSort
   ( selectionSort, bubbleSort, insertionSort
   ) where
+
+selectionSort :: [Int] -> [Int]
+selectionSort [] = []
+selectionSort [x] = [x]
+selectionSort xs =
+    let (minVal, rest) = pickMin xs
+    in minVal : selectionSort rest
+
+pickMin :: [Int] -> (Int, [Int])
+pickMin [] = error "Cannot pick minimum from an empty list"
+pickMin (x:xs) = go x [] xs
+  where
+    go minVal acc [] = (minVal, reverse acc)
+    go minVal acc (y:ys)
+      | y < minVal = go y (minVal:acc) ys
+      | otherwise  = go minVal (y:acc) ys
+
+bubbleSort :: [Int] -> [Int]
+bubbleSort [] = []
+bubbleSort [x] = [x]
+bubbleSort xs =
+    let (swapped, result) = bubblePass xs
+    in if swapped then bubbleSort result else result
+
+bubblePass :: [Int] -> (Bool, [Int])
+bubblePass [] = (False, [])
+bubblePass [x] = (False, [x])
+bubblePass (x:y:xs)
+    | x > y     = let (swapped, rest) = bubblePass (x:xs)
+                  in (True, y:rest)
+    | otherwise = let (swapped, rest) = bubblePass (y:xs)
+                  in (swapped, x:rest)
+
+insertionSort :: [Int] -> [Int]
+insertionSort [] = []
+insertionSort (x:xs) = insert x (insertionSort xs)
+
+insert :: Int -> [Int] -> [Int]
+insert x [] = [x]
+insert x (y:ys)
+    | x <= y    = x : y : ys
+    | otherwise = y : insert x ys
