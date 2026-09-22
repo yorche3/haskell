@@ -1,4 +1,3 @@
--- |
 -- naive_sort.hs — Módulo Naive Sort con ordenamientos elementales
 --
 -- Especificación: 05_Naive_Sort
@@ -14,6 +13,9 @@ module NaiveSort
   ( selectionSort, bubbleSort, insertionSort
   ) where
 
+-- selectionSort: ordena ascendente buscando el mínimo del tramo no ordenado
+-- input: [Int]
+-- output: [Int] ordenada de menor a mayor
 selectionSort :: [Int] -> [Int]
 selectionSort [] = []
 selectionSort [x] = [x]
@@ -30,6 +32,9 @@ pickMin (x:xs) = go x [] xs
       | y < minVal = go y (minVal:acc) ys
       | otherwise  = go minVal (y:acc) ys
 
+-- bubbleSort: compara e intercambia adyacentes, con bandera de salida temprana
+-- input: [Int]
+-- output: [Int] ordenada de menor a mayor
 bubbleSort :: [Int] -> [Int]
 bubbleSort [] = []
 bubbleSort [x] = [x]
@@ -46,6 +51,9 @@ bubblePass (x:y:xs)
     | otherwise = let (swapped, rest) = bubblePass (y:xs)
                   in (swapped, x:rest)
 
+-- insertionSort: inserta cada elemento en su sub-lista ordenada
+-- input: [Int]
+-- output: [Int] ordenada de menor a mayor
 insertionSort :: [Int] -> [Int]
 insertionSort [] = []
 insertionSort (x:xs) = insert x (insertionSort xs)
