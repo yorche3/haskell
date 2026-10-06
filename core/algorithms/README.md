@@ -11,6 +11,7 @@ Los módulos de esta fase trabajan sobre listas **inmutables** (`[Int]`): ningun
 | Módulo | Especificación | Enfoque | Tests | Estado |
 |--------|---------------|---------|:-----:|:------:|
 | [`naive_sort/`](naive_sort/) | [05_Naive_Sort](https://yorche3.github.io/programming_languages/core/algorithms/05_Naive_Sort/) | `cabal test` + Hspec | 21 | ✅ |
+| [`data_structures_basics/`](data_structures_basics/) | [06_Data_Structures_Basics](https://yorche3.github.io/programming_languages/core/algorithms/06_Data_Structures_Basics/) | `cabal test` + HUnit | 51 | ✅ |
 
 ---
 
@@ -18,6 +19,12 @@ Los módulos de esta fase trabajan sobre listas **inmutables** (`[Int]`): ningun
 
 ```text
 algorithms/
+├── data_structures_basics/      # 06_Data_Structures_Basics
+│   ├── data-structures-basics.cabal
+│   ├── src/
+│   ├── test/
+│   ├── CHANGELOG.md
+│   └── README.md
 └── naive_sort/                  # 05_Naive_Sort
     ├── naive-sort.cabal
     ├── lib/
@@ -56,6 +63,11 @@ algorithms/
 ```bash
 # Naive Sort Tests
 cd naive_sort
+cabal build all --enable-tests
+cabal test
+
+# Data Structures Basics Tests
+cd ../data_structures_basics
 cabal build all --enable-tests
 cabal test
 ```
