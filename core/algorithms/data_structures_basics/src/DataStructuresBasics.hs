@@ -96,6 +96,34 @@ nodeWithNext :: Node -> Node -> Node
 nodeWithNext node link = node { next = Just link }
 
 -- ---------------------------------------------------------------------------
+-- Auxiliaries: the chain is rebuilt on the way back, so no chain is walked
+-- twice and no list of values is materialised
+-- ---------------------------------------------------------------------------
+
+-- | Chain with @newNode@ linked after its last node.
+appendNode :: Maybe Node -> Node -> Maybe Node
+appendNode Nothing newNode = Just newNode
+appendNode (Just node) newNode = case next node of
+  Nothing   -> Just (nodeWithNext node newNode)
+  Just rest -> Just node { next = appendNode (Just rest) newNode }
+
+-- | Removes the first occurrence of @v@: whether it was there and the resulting
+-- chain (the same one when it was not).
+removeFirst :: Maybe Node -> Int -> (Bool, Maybe Node)
+removeFirst Nothing _ = (False, Nothing)
+removeFirst (Just node) v
+  | value node == v = (True, next node)
+  | otherwise       = case removeFirst (next node) v of
+      (True, rest) -> (True, Just node { next = rest })
+      (False, _)   -> (False, Just node)
+
+-- | Last cell of a chain.
+lastNode :: Node -> Node
+lastNode node = case next node of
+  Nothing   -> node
+  Just rest -> lastNode rest
+
+-- ---------------------------------------------------------------------------
 -- LinkedList
 -- ---------------------------------------------------------------------------
 
@@ -105,28 +133,56 @@ newLinkedList = LinkedList { llHead = Nothing, llTail = Nothing, llCount = 0 }
 
 -- | Head value, or -1 when the list is empty (@get_head@).
 linkedListHead :: LinkedList -> Int
-linkedListHead _ = -1
+linkedListHead ll = case llHead ll of
+  Just node -> value node
+  Nothing   -> -1
 
 -- | Inserts @v@ at the front of the list (@insert_head@).
 linkedListInsertHead :: Int -> LinkedList -> LinkedList
-linkedListInsertHead _ l = l
+linkedListInsertHead v l =
+  let newHead = (newNode v) { next = llHead l }
+      newTail = case llTail l of
+        Nothing -> Just newHead
+        Just _  -> llTail l
+  in LinkedList { llHead = Just newHead, llTail = newTail, llCount = llCount l + 1 }
 
 -- | Inserts @v@ at the end of the list (@insert_tail@).
+--
+-- The tail cell cannot be linked in place (the chain is immutable), so the path
+-- down to it is rebuilt: O(n) instead of the O(1) the specification promises.
 linkedListInsertTail :: Int -> LinkedList -> LinkedList
-linkedListInsertTail _ l = l
+linkedListInsertTail v l = case llHead l of
+  Nothing -> LinkedList { llHead = Just newTail, llTail = Just newTail, llCount = 1 }
+  Just _  -> LinkedList
+    { llHead  = appendNode (llHead l) newTail
+    , llTail  = Just newTail
+    , llCount = llCount l + 1
+    }
+  where
+    newTail = newNode v
 
 -- | Removes the first occurrence of @v@ (@delete@): @(True, the resulting
 -- list)@ when it was there and @(False, the same list)@ when it was not.
 linkedListDelete :: Int -> LinkedList -> (Bool, LinkedList)
-linkedListDelete _ l = (False, l)
+linkedListDelete v l = case llHead l of
+  Nothing -> (False, l)
+  Just _  ->
+    let (found, newHead) = removeFirst (llHead l) v
+    in if found
+         then
+           let newTail = case newHead of
+                 Nothing   -> Nothing
+                 Just node -> Just (lastNode node)
+           in (True, LinkedList { llHead = newHead, llTail = newTail, llCount = llCount l - 1 })
+         else (False, l)
 
 -- | True when the list stores no nodes (@is_empty@).
 linkedListIsEmpty :: LinkedList -> Bool
-linkedListIsEmpty _ = False
+linkedListIsEmpty ll = llCount ll == 0
 
 -- | Number of nodes stored (@size@).
 linkedListSize :: LinkedList -> Int
-linkedListSize _ = 0
+linkedListSize ll = llCount ll
 
 -- ---------------------------------------------------------------------------
 -- Stack
@@ -138,24 +194,29 @@ newStack = Stack { stTop = Nothing, stCount = 0 }
 
 -- | Pushes @v@ on top of the stack (@push@).
 stackPush :: Int -> Stack -> Stack
-stackPush _ s = s
+stackPush v s = Stack { stTop = Just newNode, stCount = stCount s + 1 }
+  where newNode = Node { value = v, next = stTop s }
 
 -- | Removes and returns the top value (@pop@); @(-1, the same stack)@ when the
 -- stack is empty.
 stackPop :: Stack -> (Int, Stack)
-stackPop s = (-1, s)
+stackPop s = case stTop s of
+  Nothing   -> (-1, s)
+  Just node -> (value node, Stack { stTop = next node, stCount = stCount s - 1 })
 
 -- | Returns the top value without removing it, or -1 when empty (@peek@).
 stackPeek :: Stack -> Int
-stackPeek _ = -1
+stackPeek s = case stTop s of
+  Nothing   -> -1
+  Just node -> value node
 
 -- | True when the stack stores no nodes (@is_empty@).
 stackIsEmpty :: Stack -> Bool
-stackIsEmpty _ = False
+stackIsEmpty s = stCount s == 0
 
 -- | Number of nodes stored (@size@).
 stackSize :: Stack -> Int
-stackSize _ = 0
+stackSize s = stCount s
 
 -- ---------------------------------------------------------------------------
 -- Queue
@@ -166,22 +227,42 @@ newQueue :: Queue
 newQueue = Queue { qFront = Nothing, qRear = Nothing, qCount = 0 }
 
 -- | Adds @v@ at the rear of the queue (@enqueue@).
+--
+-- The path down to the rear is rebuilt, like in 'linkedListInsertTail': O(n)
+-- instead of the O(1) the specification promises.
 queueEnqueue :: Int -> Queue -> Queue
-queueEnqueue _ q = q
+queueEnqueue v q = case qFront q of
+  Nothing -> Queue { qFront = Just newRear, qRear = Just newRear, qCount = 1 }
+  Just _  -> Queue
+    { qFront = appendNode (qFront q) newRear
+    , qRear  = Just newRear
+    , qCount = qCount q + 1
+    }
+  where
+    newRear = newNode v
 
 -- | Removes and returns the front value (@dequeue@); @(-1, the same queue)@
 -- when the queue is empty.
 queueDequeue :: Queue -> (Int, Queue)
-queueDequeue q = (-1, q)
+queueDequeue q = case qFront q of
+  Nothing   -> (-1, q)
+  Just node ->
+    let newFront = next node
+        newRear = case newFront of
+          Nothing -> Nothing
+          Just _  -> qRear q
+    in (value node, Queue { qFront = newFront, qRear = newRear, qCount = qCount q - 1 })
 
 -- | Returns the front value without removing it, or -1 when empty (@peek@).
 queuePeek :: Queue -> Int
-queuePeek _ = -1
+queuePeek q = case qFront q of
+  Nothing   -> -1
+  Just node -> value node
 
 -- | True when the queue stores no nodes (@is_empty@).
 queueIsEmpty :: Queue -> Bool
-queueIsEmpty _ = False
+queueIsEmpty q = qCount q == 0
 
 -- | Number of nodes stored (@size@).
 queueSize :: Queue -> Int
-queueSize _ = 0
+queueSize q = qCount q
