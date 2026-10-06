@@ -100,12 +100,12 @@ nodeWithNext node link = node { next = Just link }
 -- twice and no list of values is materialised
 -- ---------------------------------------------------------------------------
 
--- | Chain with @newNode@ linked after its last node.
+-- | Chain with @newNodeItem@ linked after its last node.
 appendNode :: Maybe Node -> Node -> Maybe Node
-appendNode Nothing newNode = Just newNode
-appendNode (Just node) newNode = case next node of
-  Nothing   -> Just (nodeWithNext node newNode)
-  Just rest -> Just node { next = appendNode (Just rest) newNode }
+appendNode Nothing newNodeItem = Just newNodeItem
+appendNode (Just node) newNodeItem = case next node of
+  Nothing   -> Just (nodeWithNext node newNodeItem)
+  Just rest -> Just node { next = appendNode (Just rest) newNodeItem }
 
 -- | Removes the first occurrence of @v@: whether it was there and the resulting
 -- chain (the same one when it was not).
@@ -194,8 +194,8 @@ newStack = Stack { stTop = Nothing, stCount = 0 }
 
 -- | Pushes @v@ on top of the stack (@push@).
 stackPush :: Int -> Stack -> Stack
-stackPush v s = Stack { stTop = Just newNode, stCount = stCount s + 1 }
-  where newNode = Node { value = v, next = stTop s }
+stackPush v s = Stack { stTop = Just newTop, stCount = stCount s + 1 }
+  where newTop = Node { value = v, next = stTop s }
 
 -- | Removes and returns the top value (@pop@); @(-1, the same stack)@ when the
 -- stack is empty.
