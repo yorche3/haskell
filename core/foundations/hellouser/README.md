@@ -10,7 +10,7 @@ El proyecto consiste en un único archivo fuente, sin configuración de build ni
 
 | Archivo / Directorio | Propósito |
 |----------------------|-----------|
-| `hellouser.hs`  | Código fuente que solicita el nombre y saluda. |
+| `HelloUser.hs`  | Código fuente que solicita el nombre y saluda. |
 
 **Estructura de directorios esperada:**
 
@@ -19,7 +19,7 @@ haskell/
 └── core/
     └── foundations/
         └── hellouser/
-            └── hellouser.hs
+            └── HelloUser.hs
 ```
 
 No se requieren directorios adicionales de compilación, pruebas ni archivos de proyecto.  
@@ -41,7 +41,7 @@ El archivo `.hs` es autocontenido y puede ejecutarse directamente con `runghc` o
    mkdir -p haskell/core/foundations/hellouser
    ```
 
-2. Escribir el archivo `hellouser.hs` con el código fuente.
+2. Escribir el archivo `HelloUser.hs` con el código fuente.
 
 3. No se necesita ningún paso adicional de construcción o vinculación de dependencias.
 
@@ -66,7 +66,7 @@ Si se desea ignorar artefactos de compilación, se puede agregar un `.gitignore`
 ### Ejecutar programa principal / Run main program
 
 ```bash
-runghc hellouser.hs
+runghc HelloUser.hs
 ```
 
 Al ejecutarlo, el programa pedirá un nombre y responderá con el saludo.
@@ -74,7 +74,7 @@ Al ejecutarlo, el programa pedirá un nombre y responderá con el saludo.
 Si se prefiere compilar a un ejecutable nativo y luego ejecutar:
 
 ```bash
-ghc -o hellouser hellouser.hs
+ghc -o hellouser HelloUser.hs
 ./hellouser
 ```
 
