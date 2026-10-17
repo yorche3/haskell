@@ -18,14 +18,14 @@ module NaiveSort
 -- output: [Int] ordenada de menor a mayor
 selectionSort :: [Int] -> [Int]
 selectionSort [] = []
-selectionSort [x] = [x]
-selectionSort xs =
-    let (minVal, rest) = pickMin xs
+selectionSort (x:xs) =
+    let (minVal, rest) = pickMin x xs
     in minVal : selectionSort rest
 
-pickMin :: [Int] -> (Int, [Int])
-pickMin [] = error "Cannot pick minimum from an empty list"
-pickMin (x:xs) = go x [] xs
+-- pickMin recibe el primer elemento por separado: así la lista de entrada es no
+-- vacía por construcción y el módulo no necesita un caso imposible con `error`.
+pickMin :: Int -> [Int] -> (Int, [Int])
+pickMin first rest = go first [] rest
   where
     go minVal acc [] = (minVal, reverse acc)
     go minVal acc (y:ys)
