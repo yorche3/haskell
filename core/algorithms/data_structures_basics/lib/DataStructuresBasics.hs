@@ -2,9 +2,8 @@
 --
 -- Specification: 06_Data_Structures_Basics
 --
--- Contract stub (step 4b): declares the new types and the signatures, and leaves
--- every body at its failure indicator. The algorithm is written in step 5 and the
--- suite in step 4c.
+-- Contract: declares the new types, the signatures and every operation body over
+-- the shared cell. Only the links are @Maybe Node@; fallible reads return -1.
 --
 -- Indicators:
 --   * only the Node links may be absent (Nothing): Node.next, llHead, llTail,
