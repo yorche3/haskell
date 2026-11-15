@@ -1,0 +1,12 @@
+# Cabal build artifacts
+dist-newstyle/
+dist/
+*.hi
+*.o
+
+# GHC artifacts
+*.exe
+
+# Cabal local state
+cabal.project.local
+cabal.project.local~

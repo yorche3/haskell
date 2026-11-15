@@ -12,6 +12,7 @@ Los módulos de esta fase trabajan sobre listas **inmutables** (`[Int]`): ningun
 |--------|---------------|---------|:-----:|:------:|
 | [`naive_sort/`](naive_sort/) | [05_Naive_Sort](https://yorche3.github.io/programming_languages/core/algorithms/05_Naive_Sort/) | `cabal test` + Hspec | 21 | ✅ |
 | [`data_structures_basics/`](data_structures_basics/) | [06_Data_Structures_Basics](https://yorche3.github.io/programming_languages/core/algorithms/06_Data_Structures_Basics/) | `cabal test` + HUnit | 51 | ✅ |
+| [`data_structures_advanced/`](data_structures_advanced/) | [07_Data_Structures_Advanced](https://yorche3.github.io/programming_languages/core/algorithms/07_Data_Structures_Advanced/) | `cabal test` + Hspec | 89 | ✅ |
 
 ---
 
@@ -19,6 +20,15 @@ Los módulos de esta fase trabajan sobre listas **inmutables** (`[Int]`): ningun
 
 ```text
 algorithms/
+├── data_structures_advanced/    # 07_Data_Structures_Advanced
+│   ├── data-structures-advanced.cabal
+│   ├── lib/
+│   │   └── DataStructuresAdvanced.hs # TreeNode, BinaryTree, Graph
+│   ├── test/
+│   │   ├── DataStructuresAdvancedSpec.hs # 24 casos (89 ejemplos)
+│   │   └── RunTests.hs          # Entry point
+│   ├── CHANGELOG.md
+│   └── README.md
 ├── data_structures_basics/      # 06_Data_Structures_Basics
 │   ├── data-structures-basics.cabal
 │   ├── src/
@@ -48,7 +58,7 @@ algorithms/
 | **Warnings** | `common warnings` con `ghc-options: -Wall`, importado por ambos componentes |
 | **Framework de tests** | Hspec (`hspec ^>=2.11.0`) en `build-depends` del test-suite |
 | **Entry point** | `test/RunTests.hs`, declarado como `main-is` |
-| **Separación** | `lib/` (código) ↔ `test/` (specs + runner) |
+| **Separación** | `lib/` (o `src/`) (código) ↔ `test/` (specs + runner) |
 | **Descubrimiento** | Manual: `RunTests.hs` compone los `Spec` de cada suite |
 | **Iteración** | Recursión y *pattern matching*; listas inmutables |
 | **Visibilidad** | `module ... ( ... ) where` — sólo se exportan las funciones del contrato |
@@ -68,6 +78,11 @@ cabal test
 
 # Data Structures Basics Tests
 cd ../data_structures_basics
+cabal build all --enable-tests
+cabal test
+
+# Data Structures Advanced Tests
+cd ../data_structures_advanced
 cabal build all --enable-tests
 cabal test
 ```
