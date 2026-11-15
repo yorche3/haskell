@@ -6,7 +6,7 @@ import Test.Hspec
 
 -- Casos de prueba de la especificación 07_Data_Structures_Advanced.md:
 -- 6 de TreeNode (el 6.º, la adaptación inmutable, es el único comportamiento
--- de Haskell), 7 de BinaryTree y 10 de Graph.
+-- de Haskell), 7 de BinaryTree y 11 de Graph.
 --
 -- Haskell es inmutable: cada paso encadena el valor devuelto por el anterior y
 -- cada caso parte de `newBinaryTree`/`newGraph`. `insert` y `add_vertex` no
@@ -117,6 +117,15 @@ graphNoEdge = graphWithVertices [10, 30]
 
 graphSelfLoopResult :: ([Bool], Graph)
 graphSelfLoopResult = addEdges [(10, 10), (10, 10)] graphIsolated
+
+-- Vecinos guardados antes de añadir otra arista: en Haskell el resultado ya es
+-- una copia inmutable, así que se comprueba que el guardado no cambia.
+graphIsolationResult :: ([Bool], Maybe [Int], Graph)
+graphIsolationResult =
+  let (_, g1) = addEdges [(10, 30)] (graphWithVertices [10, 30, 50])
+      saved = graphGetNeighbors 10 g1
+      (flags, g2) = addEdges [(10, 50)] g1
+   in (flags, saved, g2)
 
 -- ---------------------------------------------------------------------------
 -- Suite
@@ -334,3 +343,15 @@ spec = do
         graphVertexCount g `shouldBe` 1
       it "edge_count should return 1" $
         graphEdgeCount g `shouldBe` 1
+    describe "neighbour-result isolation" $ do
+      let (flags, saved, g) = graphIsolationResult
+      it "add_edge(10,50) should succeed" $
+        flags `shouldBe` [True]
+      it "the saved result should remain [30]" $
+        saved `shouldBe` Just [30]
+      it "fresh neighbours of 10 should be [30,50]" $
+        graphGetNeighbors 10 g `shouldBe` Just [30, 50]
+      it "vertex_count should return 3" $
+        graphVertexCount g `shouldBe` 3
+      it "edge_count should return 2" $
+        graphEdgeCount g `shouldBe` 2
