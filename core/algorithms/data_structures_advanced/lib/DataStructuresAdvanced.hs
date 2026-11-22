@@ -115,6 +115,13 @@ insertNeighbor v ns@(x : xs)
   | v < x = v : ns
   | otherwise = x : insertNeighbor v xs
 
+-- Hand-written lookup: the adjacency is walked element by element.
+hasNeighbor :: Int -> [Int] -> Bool
+hasNeighbor _ [] = False
+hasNeighbor v (x : xs)
+  | v == x = True
+  | otherwise = hasNeighbor v xs
+
 addNeighbor :: Int -> Int -> Maybe GraphNode -> Maybe GraphNode
 addNeighbor _ _ Nothing = Nothing
 addNeighbor u v (Just node)
@@ -136,7 +143,7 @@ graphAddVertex v g = case findVertex v (grVertices g) of
 graphAddEdge :: Int -> Int -> Graph -> (Bool, Graph)
 graphAddEdge u v g = case (findVertex u vertices, findVertex v vertices) of
   (Just from, Just _)
-    | v `elem` gnNeighbors from -> (True, g)
+    | hasNeighbor v (gnNeighbors from) -> (True, g)
     | otherwise ->
         ( True
         , g
@@ -151,7 +158,7 @@ graphAddEdge u v g = case (findVertex u vertices, findVertex v vertices) of
 graphHasEdge :: Int -> Int -> Graph -> Bool
 graphHasEdge u v g = case findVertex u (grVertices g) of
   Nothing -> False
-  Just from -> v `elem` gnNeighbors from
+  Just from -> hasNeighbor v (gnNeighbors from)
 
 -- @Nothing@ when the vertex is not registered, @Just []@ when it is isolated.
 graphGetNeighbors :: Int -> Graph -> Maybe [Int]
